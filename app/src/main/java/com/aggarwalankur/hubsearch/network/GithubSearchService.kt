@@ -5,7 +5,7 @@ import retrofit2.http.Query
 
 interface GithubSearchService {
     @GET("search/users")
-    suspend fun searchRepos(
+    suspend fun searchGithubUsers(
         @Query("q") query: String,
         @Query("page") page: Int,
         @Query("per_page") itemsPerPage: Int

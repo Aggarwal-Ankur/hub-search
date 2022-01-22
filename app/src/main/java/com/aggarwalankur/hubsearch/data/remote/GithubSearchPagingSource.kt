@@ -17,7 +17,7 @@ class GithubSearchPagingSource (
         val position = params.key ?: GITHUB_STARTING_PAGE_INDEX
         val apiQuery = query + IN_QUALIFIER
         return try {
-            val response = service.searchRepos(apiQuery, position, params.loadSize)
+            val response = service.searchGithubUsers(apiQuery, position, params.loadSize)
             val repos = response.items
             val nextKey = if (repos.isEmpty()) {
                 null

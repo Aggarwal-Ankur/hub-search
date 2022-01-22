@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">HubSearch</string>
+    <string name="loading">Loading</string>
+    <string name="language">Language: %s</string>
+    <string name="search_hint">Enter Github Username to search</string>
+    <string name="no_results">No results found !!!</string>
+    <string name="retry">Retry</string>
 </resources>
