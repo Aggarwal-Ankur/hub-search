@@ -3,28 +3,31 @@ package com.aggarwalankur.hubsearch.network
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
-@Entity(tableName = "users")
+@Entity(tableName = "users"/*, indices = [Index(value = ["login"], unique = true)]*/)
 @Parcelize
 data class User (
 
-    @PrimaryKey(autoGenerate = false)
-    val id: Int,
-    val login : String,
-    val type : String,
+    @PrimaryKey(autoGenerate = true)
+    val user_key: Long,
 
-    @Json(name = "html_url")
+
+    @field:SerializedName("id") val id : Long,
+    @field:SerializedName("login") val login : String,
+    @field:SerializedName("type") val type : String,
+
+    @field:SerializedName("html_url")
     val profileUrl : String,
 
-    @Json(name = "avatar_url")
+    @field:SerializedName("avatar_url")
     val avatarUrl : String,
 
-    @Json(name = "followers_url")
+    @field:SerializedName("followers_url")
     val followersUrl : String,
 
-    @Json(name = "repos_url")
+    @field:SerializedName("repos_url")
     val reposUrl : String,
 
     var isStarred : Boolean = false

@@ -4,11 +4,9 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.aggarwalankur.hubsearch.data.GithubUserRepository
-import com.aggarwalankur.hubsearch.data.local.StarredUserDao
 import com.aggarwalankur.hubsearch.network.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,14 +20,15 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor ( private val repository: GithubUserRepository,
-                                          private val savedStateHandle: SavedStateHandle,
-                                          private val starredUserDao : StarredUserDao
+                                          private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val state: StateFlow<UiState>
+
     val pagingDataFlow: Flow<PagingData<User>>
+
+    //Processes any errors from UI
     val accept: (UiAction) -> Unit
-    private lateinit var starredUsers : List<User>
 
     init {
         val initialQuery: String = savedStateHandle.get(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
@@ -42,7 +41,8 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
         val queriesScrolled = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
             .distinctUntilChanged()
-            // below, cache the last query scrolled
+            // This is shared to keep the flow "hot" while caching the last query scrolled,
+            // otherwise each flatMapLatest invocation would lose the last query scrolled,
             .shareIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
             .onStart { emit(UiAction.Scroll(currentQuery = lastQueryScrolled)) }
 
         pagingDataFlow = searches
-            .flatMapLatest { searchGithubUsers(queryString = it.query) }
+            .flatMapLatest { searchUsers(queryString = it.query) }
             .cachedIn(viewModelScope)
 
         state = combine(
@@ -76,15 +76,9 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
 
-        viewModelScope.launch { populateStarredUsers() }
-
     }
 
-    private suspend fun populateStarredUsers () {
-        withContext(Dispatchers.IO) {
-            starredUsers = starredUserDao.getStarredUsers()
-        }
-    }
+
 
     override fun onCleared() {
         savedStateHandle[LAST_SEARCH_QUERY] = state.value.query
@@ -97,13 +91,13 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
 
     private suspend fun insertUser(user: User) {
         withContext(Dispatchers.IO) {
-            starredUserDao.insert(user)
+            //starredUserDao.insert(user)
         }
     }
 
     private suspend fun deleteUser(user: User) {
         withContext(Dispatchers.IO) {
-            starredUserDao.delete(user.id)
+            //starredUserDao.delete(user.id)
         }
     }
 
@@ -129,6 +123,11 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
             Timber.d ("User ${user.login} unstarred")
         }
     }
+
+    private fun searchUsers(queryString: String): Flow<PagingData<User>> =
+        repository.getSearchResultStream(queryString)
+            //We may insert paging separators, but for now, not doing this
+
 
 }
 

@@ -26,7 +26,7 @@ class DetailsFragment : Fragment() {
 
         val args = DetailsFragmentArgs.fromBundle(requireArguments())
 
-        Toast.makeText(activity, "Name = ${args.selectedUser.login}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, "Id = ${args.selectedUser.user_key}", Toast.LENGTH_SHORT).show()
 
         binding.user = args.selectedUser
 

@@ -1,12 +1,12 @@
 package com.aggarwalankur.hubsearch.network
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class UserList (
-    @Json(name = "items")
+    @field:SerializedName( "items")
     val items: List<User> = emptyList(),
 
-    @Json(name = "total_count")
+    @field:SerializedName("total_count")
     val totalCount: Int,
 
     val nextPage: Int? = null

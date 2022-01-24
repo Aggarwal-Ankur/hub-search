@@ -2,7 +2,7 @@ package com.aggarwalankur.hubsearch.di
 
 import android.content.Context
 import androidx.room.Room
-import com.aggarwalankur.hubsearch.data.local.StarredUserDao
+import com.aggarwalankur.hubsearch.data.local.UserDao
 import com.aggarwalankur.hubsearch.data.local.UsersDatabase
 import dagger.Module
 import dagger.Provides
@@ -26,7 +26,7 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideStarredUserDaoFromDatabase(usersDatabase : UsersDatabase) : StarredUserDao {
-        return usersDatabase.starredUsersDao()
+    fun provideUserDaoFromDatabase(usersDatabase : UsersDatabase) : UserDao {
+        return usersDatabase.usersDao()
     }
 }

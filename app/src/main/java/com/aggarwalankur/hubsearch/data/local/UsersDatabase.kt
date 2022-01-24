@@ -5,9 +5,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.aggarwalankur.hubsearch.network.User
 
-@Database( entities = [User::class], version = 1, exportSchema = false )
+@Database( entities = [User::class, RemoteKeys::class], version = 2, exportSchema = false )
 abstract class UsersDatabase : RoomDatabase() {
-    abstract fun starredUsersDao() : StarredUserDao
+    abstract fun usersDao() : UserDao
+    abstract fun remoteKeysDao() : RemoteKeysDao
 
     companion object {
 

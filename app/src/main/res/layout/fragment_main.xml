@@ -30,7 +30,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/search_hint"
                 android:imeOptions="actionNone"
-                android:maxLines="1"
                 android:inputType="textNoSuggestions"
                 android:selectAllOnFocus="true"
                 tools:text="Android" />
