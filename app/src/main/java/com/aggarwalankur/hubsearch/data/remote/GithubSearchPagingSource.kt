@@ -2,24 +2,44 @@ package com.aggarwalankur.hubsearch.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.aggarwalankur.hubsearch.data.local.StarredUserDao
 import com.aggarwalankur.hubsearch.network.GithubSearchService
 import com.aggarwalankur.hubsearch.network.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
 
 class GithubSearchPagingSource (
     private val service: GithubSearchService,
+    private val starredUserDao : StarredUserDao,
     private val query: String
 ) : PagingSource<Int, User>() {
+
+    private suspend fun getStarredUsers() : List<User> {
+        var users : List<User>
+        withContext(Dispatchers.IO) {
+            users = starredUserDao.getStarredUsers()
+        }
+        return users
+    }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, User> {
         val position = params.key ?: GITHUB_STARTING_PAGE_INDEX
         val apiQuery = query + IN_QUALIFIER
         return try {
             val response = service.searchGithubUsers(apiQuery, position, params.loadSize)
-            val repos = response.items
-            val nextKey = if (repos.isEmpty()) {
+            val users = response.items
+            val starredUsers = getStarredUsers()
+
+            for (user in users) {
+                if (starredUsers.contains(user)) {
+                    user.isStarred = true
+                }
+            }
+
+            val nextKey = if (users.isEmpty()) {
                 null
             } else {
                 // initial load size = 3 * NETWORK_PAGE_SIZE
@@ -27,7 +47,7 @@ class GithubSearchPagingSource (
                 position + (params.loadSize / NETWORK_PAGE_SIZE)
             }
             LoadResult.Page(
-                data = repos,
+                data = users,
                 prevKey = if (position == GITHUB_STARTING_PAGE_INDEX) null else position - 1,
                 nextKey = nextKey
             )

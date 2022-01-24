@@ -1,16 +1,18 @@
 package com.aggarwalankur.hubsearch.view
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.aggarwalankur.hubsearch.data.GithubUserRepository
+import com.aggarwalankur.hubsearch.data.local.StarredUserDao
 import com.aggarwalankur.hubsearch.network.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -20,12 +22,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor ( private val repository: GithubUserRepository,
-                                        private val savedStateHandle: SavedStateHandle
+                                          private val savedStateHandle: SavedStateHandle,
+                                          private val starredUserDao : StarredUserDao
 ) : ViewModel() {
 
     val state: StateFlow<UiState>
     val pagingDataFlow: Flow<PagingData<User>>
     val accept: (UiAction) -> Unit
+    private lateinit var starredUsers : List<User>
 
     init {
         val initialQuery: String = savedStateHandle.get(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
@@ -71,6 +75,15 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
         accept = { action ->
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
+
+        viewModelScope.launch { populateStarredUsers() }
+
+    }
+
+    private suspend fun populateStarredUsers () {
+        withContext(Dispatchers.IO) {
+            starredUsers = starredUserDao.getStarredUsers()
+        }
     }
 
     override fun onCleared() {
@@ -81,6 +94,41 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
 
     private fun searchGithubUsers(queryString: String): Flow<PagingData<User>> =
         repository.getSearchResultStream(queryString)
+
+    private suspend fun insertUser(user: User) {
+        withContext(Dispatchers.IO) {
+            starredUserDao.insert(user)
+        }
+    }
+
+    private suspend fun deleteUser(user: User) {
+        withContext(Dispatchers.IO) {
+            starredUserDao.delete(user.id)
+        }
+    }
+
+    fun toggleStar (user : User) {
+        if (user.isStarred) {
+            unstarUser(user)
+        } else {
+            starUser(user)
+        }
+    }
+
+
+    private fun starUser(user : User) {
+        viewModelScope.launch {
+            insertUser(user)
+            Timber.d ("User ${user.login} starred")
+        }
+    }
+
+    private fun unstarUser (user: User) {
+        viewModelScope.launch {
+            deleteUser(user)
+            Timber.d ("User ${user.login} unstarred")
+        }
+    }
 
 }
 

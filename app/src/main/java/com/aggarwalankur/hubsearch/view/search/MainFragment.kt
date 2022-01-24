@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -31,13 +32,13 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
+    val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-
-        val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
         // add dividers between RecyclerView's row items
         val decoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
@@ -60,7 +61,8 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
 
     override fun onUserClick(user: User) {
         Timber.d("User ${user.login} clicked")
-        //TODO : Navigate to details fragment
+        val action = MainFragmentDirections.navigateToDetailsFragment(user)
+        findNavController().navigate(action)
     }
 
     private fun FragmentMainBinding.bindState(

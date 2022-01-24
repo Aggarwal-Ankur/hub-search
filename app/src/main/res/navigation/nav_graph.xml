@@ -7,6 +7,19 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.aggarwalankur.hubsearch.view.search.MainFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        android:label="@string/fragment_main_label"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/navigateToDetailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.aggarwalankur.hubsearch.view.details.DetailsFragment"
+        android:label="@string/fragment_details_label"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="selected_user"
+            app:argType="com.aggarwalankur.hubsearch.network.User" />
+    </fragment>
 </navigation>

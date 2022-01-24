@@ -1,11 +1,16 @@
 package com.aggarwalankur.hubsearch.network
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import kotlinx.android.parcel.Parcelize
 
+@Entity(tableName = "users")
 @Parcelize
 data class User (
+
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     val login : String,
     val type : String,
@@ -21,5 +26,7 @@ data class User (
 
     @Json(name = "repos_url")
     val reposUrl : String,
+
+    var isStarred : Boolean = false
 
 ) : Parcelable
