@@ -15,12 +15,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_small"
+        android:paddingBottom="@dimen/padding_small">
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,9 +31,9 @@
 
         <ImageView
             android:id="@+id/star"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="4dp"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size"
+            android:padding="@dimen/padding_small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

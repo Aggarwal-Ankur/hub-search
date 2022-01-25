@@ -75,6 +75,7 @@ class GithubRemoteMediator(
 
                 userDatabase.remoteKeysDao().insertAll(keys)
                 userDatabase.usersDao().insertAll(users)
+                userDatabase.usersDao().updateStarredUsers()
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (exception: IOException) {

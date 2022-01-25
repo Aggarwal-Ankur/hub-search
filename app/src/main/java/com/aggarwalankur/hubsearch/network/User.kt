@@ -31,8 +31,4 @@ data class User (
 
     var isStarred : Boolean = false
 
-) : Parcelable {
-    fun toggleStarValue() {
-        isStarred = !isStarred
-    }
-}
+) : Parcelable

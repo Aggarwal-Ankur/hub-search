@@ -11,7 +11,10 @@ interface UserDao {
     suspend fun insert (user : User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(repos: List<User>)
+    suspend fun insertAll(users: List<User>)
+
+    @Query("UPDATE users SET isStarred=1 WHERE EXISTS (SELECT * FROM starred_users WHERE login LIKE users.login)")
+    suspend fun updateStarredUsers ()
 
     //@Query ("DELETE FROM users WHERE id = :id")
     //suspend fun deleteUser (id : Int)

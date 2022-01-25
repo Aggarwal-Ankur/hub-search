@@ -35,7 +35,7 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         ).flow
     }
 
-    suspend fun insertUser(user: User) {
+    suspend fun insertStarredUser(user: User) {
         withContext(Dispatchers.IO) {
             user.isStarred = true
             database.starredUserDao().insert(user.toStarredUser())
@@ -43,7 +43,7 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         }
     }
 
-    suspend fun deleteUser(user: User) {
+    suspend fun deleteStarredUser(user: User) {
         user.isStarred = false
         withContext(Dispatchers.IO) {
             database.starredUserDao().delete(user.id)

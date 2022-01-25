@@ -6,10 +6,8 @@ import androidx.paging.cachedIn
 import com.aggarwalankur.hubsearch.data.GithubUserRepository
 import com.aggarwalankur.hubsearch.network.User
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -101,43 +99,44 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
     }
 
     fun toggleStarForSelectedUser(user : User) {
-        //First, change the user
-        user.isStarred = !user.isStarred
-        _selectedUser.value = user
+        //First, create the changed user
+        val changedUser = user.copy(isStarred = !user.isStarred)
+        _selectedUser.value = changedUser
 
         //We have just set the user ^
         _selectedUserIsStarred.value = selectedUser.value!!.isStarred
 
         _selectedUserIsStarred.value?.let {
             if(it) {
-                starUser(user)
+                starUser(changedUser)
             }else {
-                unstarUser(user)
+                unstarUser(changedUser)
             }
         }
     }
 
     fun toggleStar (user : User) {
-
-            /*if (user.isStarred) {
-                unstarUser(user)
-            } else {
-                starUser(user)
-            }*/
-
+        //First, create the changed user
+        val changedUser = user.copy(isStarred = !user.isStarred)
+        Timber.d("toggleStar : user=${user.isStarred} ; changed = ${changedUser.isStarred}")
+        if(changedUser.isStarred) {
+            starUser(changedUser)
+        }else {
+            unstarUser(changedUser)
+        }
     }
 
 
     private fun starUser(user : User) {
         viewModelScope.launch {
-            repository.insertUser(user)
+            repository.insertStarredUser(user)
             Timber.d ("User ${user.login} starred")
         }
     }
 
     private fun unstarUser (user: User) {
         viewModelScope.launch {
-            repository.deleteUser(user)
+            repository.deleteStarredUser(user)
             Timber.d ("User ${user.login} unstarred")
         }
     }
