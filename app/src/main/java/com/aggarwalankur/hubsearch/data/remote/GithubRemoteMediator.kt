@@ -34,27 +34,20 @@ class GithubRemoteMediator(
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                Timber.d("Refresh remotekeys = " + remoteKeys)
                 remoteKeys?.nextKey?.minus(1) ?: GITHUB_STARTING_PAGE_INDEX
             }
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
                 val prevKey = remoteKeys?.prevKey
-                Timber.d("Prepend remotekeys = " + remoteKeys + "; prevKey = " + prevKey)
                 if (prevKey == null) {
-                    Timber.d("Prepend2 remotekeys = " + remoteKeys + "; prevKey = " + prevKey)
-
                     return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 }
-
                 prevKey
             }
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
                 val nextKey = remoteKeys?.nextKey
-                Timber.d("Append remotekeys = " + remoteKeys + "; nextKey = " + nextKey)
                 if (nextKey == null) {
-                    Timber.d("Append2 remotekeys = " + remoteKeys + "; nextKey = " + nextKey)
                     return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 }
                 nextKey
@@ -64,7 +57,6 @@ class GithubRemoteMediator(
         val apiQuery = query + IN_QUALIFIER
 
         try {
-            Timber.d ("RemoteMediator : apiQuery = $apiQuery ; page=$page ; pagesize = ${state.config.pageSize}")
             val apiResponse = service.searchGithubUsers(apiQuery, page, state.config.pageSize)
 
             val users = apiResponse.items
@@ -78,7 +70,6 @@ class GithubRemoteMediator(
                 val prevKey = if (page == GITHUB_STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
                 val keys = users.map {
-                    Timber.d("RemoteKeys inserted : userId = ${it.id} ; prev = $prevKey ; next = $nextKey")
                     RemoteKeys(userId = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
 
@@ -99,10 +90,7 @@ class GithubRemoteMediator(
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { user ->
                 // Get the remote keys of the last item retrieved
-                val rk = userDatabase.remoteKeysDao().remoteKeysUserId(user.id)
-                Timber.d("Remotekeys id = ${user.id} ; remoteKey=$rk")
-
-                rk
+                userDatabase.remoteKeysDao().remoteKeysUserId(user.id)
             }
     }
 

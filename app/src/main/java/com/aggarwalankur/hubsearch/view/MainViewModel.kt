@@ -30,6 +30,15 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
     //Processes any errors from UI
     val accept: (UiAction) -> Unit
 
+    //Showing on details screen
+    private val _selectedUser = MutableLiveData<User>()
+    val selectedUser : LiveData<User>
+        get() = _selectedUser
+
+    private val _selectedUserIsStarred = MutableLiveData<Boolean>()
+    val selectedUserIsStarred: LiveData<Boolean>
+        get() = _selectedUserIsStarred
+
     init {
         val initialQuery: String = savedStateHandle.get(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
         val lastQueryScrolled: String = savedStateHandle.get(LAST_QUERY_SCROLLED) ?: DEFAULT_QUERY
@@ -78,48 +87,57 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
 
     }
 
-
-
     override fun onCleared() {
         savedStateHandle[LAST_SEARCH_QUERY] = state.value.query
         savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         super.onCleared()
     }
 
-    private fun searchGithubUsers(queryString: String): Flow<PagingData<User>> =
-        repository.getSearchResultStream(queryString)
-
-    private suspend fun insertUser(user: User) {
-        withContext(Dispatchers.IO) {
-            //starredUserDao.insert(user)
+    fun setSelectedUser (user: User?) {
+        user?.let {
+            _selectedUser.value = it
+            _selectedUserIsStarred.value = it.isStarred
         }
     }
 
-    private suspend fun deleteUser(user: User) {
-        withContext(Dispatchers.IO) {
-            //starredUserDao.delete(user.id)
+    fun toggleStarForSelectedUser(user : User) {
+        //First, change the user
+        user.isStarred = !user.isStarred
+        _selectedUser.value = user
+
+        //We have just set the user ^
+        _selectedUserIsStarred.value = selectedUser.value!!.isStarred
+
+        _selectedUserIsStarred.value?.let {
+            if(it) {
+                starUser(user)
+            }else {
+                unstarUser(user)
+            }
         }
     }
 
     fun toggleStar (user : User) {
-        if (user.isStarred) {
-            unstarUser(user)
-        } else {
-            starUser(user)
-        }
+
+            /*if (user.isStarred) {
+                unstarUser(user)
+            } else {
+                starUser(user)
+            }*/
+
     }
 
 
     private fun starUser(user : User) {
         viewModelScope.launch {
-            insertUser(user)
+            repository.insertUser(user)
             Timber.d ("User ${user.login} starred")
         }
     }
 
     private fun unstarUser (user: User) {
         viewModelScope.launch {
-            deleteUser(user)
+            repository.deleteUser(user)
             Timber.d ("User ${user.login} unstarred")
         }
     }

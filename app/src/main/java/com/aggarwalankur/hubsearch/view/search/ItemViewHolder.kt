@@ -16,9 +16,16 @@ class ItemViewHolder @Inject constructor(
         binding.root.setOnClickListener {
             onClickListener.onUserClick(user)
         }
+
+        binding.star.setOnClickListener {
+            user.toggleStarValue()
+            onClickListener.onUserStarClick(user)
+        }
     }
 
     interface OnClickListener {
         fun onUserClick(user: User)
+
+        fun onUserStarClick (user: User)
     }
 }

@@ -5,5 +5,5 @@
     <string name="retry">Retry</string>
     <string name="fragment_main_label">Github Users</string>
     <string name="fragment_details_label">User Details</string>
-    <string name="user_type_text">User Type : %s</string>
+    <string name="user_type_text">Type : %s</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.aggarwalankur.hubsearch.network
+package com.aggarwalankur.hubsearch.data.local
 
 import android.os.Parcelable
 import androidx.room.Entity
@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
-@Entity(tableName = "users")
+@Entity(tableName = "starred_users")
 @Parcelize
-data class User (
+data class StarredUser (
 
     @PrimaryKey(autoGenerate = true)
     val user_key: Long,
@@ -29,10 +29,6 @@ data class User (
     @field:SerializedName("repos_url")
     val reposUrl : String,
 
-    var isStarred : Boolean = false
+    var isStarred : Boolean = true
 
-) : Parcelable {
-    fun toggleStarValue() {
-        isStarred = !isStarred
-    }
-}
+) : Parcelable

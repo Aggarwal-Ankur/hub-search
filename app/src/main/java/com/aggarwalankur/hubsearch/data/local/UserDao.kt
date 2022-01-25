@@ -20,10 +20,16 @@ interface UserDao {
     suspend fun clear()
 
     @Query("SELECT * FROM users")
-    fun getAllUsers(): List<User>
+    suspend fun getAllUsers(): List<User>
 
 
     @Query("SELECT * FROM users WHERE login LIKE :queryString")
     fun usersByName(queryString : String): PagingSource<Int, User>
+
+    @Query("SELECT * FROM users WHERE id = :id")
+    suspend fun getUserById(id : Int) : User?
+
+    @Update
+    suspend fun updateUser(user : User)
 
 }

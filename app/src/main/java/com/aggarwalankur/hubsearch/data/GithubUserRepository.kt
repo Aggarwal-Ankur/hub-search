@@ -6,10 +6,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.aggarwalankur.hubsearch.data.local.UsersDatabase
 import com.aggarwalankur.hubsearch.data.remote.GithubRemoteMediator
+import com.aggarwalankur.hubsearch.data.utils.toStarredUser
 import com.aggarwalankur.hubsearch.network.GithubSearchService
 import com.aggarwalankur.hubsearch.network.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GithubUserRepository @Inject constructor(private val service: GithubSearchService,
@@ -20,7 +22,6 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         // appending '%' so we can allow other characters to be before and after the query string
         val dbQuery = "%${query.replace(' ', '%')}%"
         val pagingSourceFactory = { database.usersDao().usersByName(dbQuery) }
-        Timber.d("New query: $dbQuery")
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
@@ -32,6 +33,22 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
+    }
+
+    suspend fun insertUser(user: User) {
+        withContext(Dispatchers.IO) {
+            user.isStarred = true
+            database.starredUserDao().insert(user.toStarredUser())
+            database.usersDao().updateUser(user)
+        }
+    }
+
+    suspend fun deleteUser(user: User) {
+        user.isStarred = false
+        withContext(Dispatchers.IO) {
+            database.starredUserDao().delete(user.id)
+            database.usersDao().updateUser(user)
+        }
     }
 
     companion object {

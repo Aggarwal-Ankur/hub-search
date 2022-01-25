@@ -65,6 +65,10 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
         findNavController().navigate(action)
     }
 
+    override fun onUserStarClick(user: User) {
+        viewModel.toggleStar(user)
+    }
+
     private fun FragmentMainBinding.bindState(
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<User>>,

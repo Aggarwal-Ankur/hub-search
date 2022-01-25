@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="userBindingAdapter"
             type="com.aggarwalankur.hubsearch.view.search.UserBindingAdapter" />
@@ -36,7 +35,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_star_outline" />
+            android:src="@{user.isStarred?@drawable/ic_star_fill:@drawable/ic_star_outline}" />
 
         <TextView
             android:layout_width="wrap_content"

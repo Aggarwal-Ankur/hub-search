@@ -16,13 +16,15 @@ class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
+    val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
 
-        val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
 
         val args = DetailsFragmentArgs.fromBundle(requireArguments())
 
@@ -32,7 +34,18 @@ class DetailsFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        binding.lifecycleOwner = this
+
+        //Set selected user in viewmodel
+        viewModel.setSelectedUser(args.selectedUser)
+
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        //Clear selected user in viewmodel
+        viewModel.setSelectedUser(null)
+        super.onDestroyView()
     }
 
 }
