@@ -1,6 +1,5 @@
 package com.aggarwalankur.hubsearch.data.remote
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -12,7 +11,6 @@ import com.aggarwalankur.hubsearch.network.GithubSearchService
 import com.aggarwalankur.hubsearch.network.IN_QUALIFIER
 import com.aggarwalankur.hubsearch.network.User
 import retrofit2.HttpException
-import timber.log.Timber
 import java.io.IOException
 
 //Github page values start at 1, not 0

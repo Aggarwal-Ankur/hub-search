@@ -4,11 +4,9 @@ import androidx.paging.PagingSource
 import androidx.test.filters.SmallTest
 import com.aggarwalankur.hubsearch.data.utils.toStarredUser
 import com.aggarwalankur.hubsearch.network.FakeUserFactory
-import com.aggarwalankur.hubsearch.network.User
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
