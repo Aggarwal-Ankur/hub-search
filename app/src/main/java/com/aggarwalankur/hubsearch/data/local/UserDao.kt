@@ -30,9 +30,9 @@ interface UserDao {
     fun usersByName(queryString : String): PagingSource<Int, User>
 
     @Query("SELECT * FROM users WHERE id = :id")
-    suspend fun getUserById(id : Int) : User?
+    suspend fun getUserById(id : Long) : User?
 
     @Query("UPDATE users SET isStarred=:isStarred WHERE id = :userId")
-    suspend fun updateUser(userId : Long, isStarred : Boolean)
+    suspend fun updateUserStarredStatus(userId : Long, isStarred : Boolean)
 
 }

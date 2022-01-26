@@ -50,7 +50,7 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         withContext(Dispatchers.IO) {
             user.isStarred = true
             database.starredUserDao().insert(user.toStarredUser())
-            database.usersDao().updateUser(user.id, true)
+            database.usersDao().updateUserStarredStatus(user.id, true)
         }
     }
 
@@ -58,7 +58,7 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         user.isStarred = false
         withContext(Dispatchers.IO) {
             database.starredUserDao().delete(user.id)
-            database.usersDao().updateUser(user.id, false)
+            database.usersDao().updateUserStarredStatus(user.id, false)
         }
     }
 
