@@ -1,7 +1,7 @@
 package com.aggarwalankur.hubsearch.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.*
-import com.aggarwalankur.hubsearch.network.User
 
 @Dao
 interface StarredUserDao {
@@ -13,6 +13,6 @@ interface StarredUserDao {
     suspend fun delete(id : Long)
 
     @Query("SELECT * FROM starred_users")
-    suspend fun getStarredUsers(): List<User>
+    fun getStarredUsers(): PagingSource<Int, StarredUser>
 
 }

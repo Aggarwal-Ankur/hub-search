@@ -16,6 +16,7 @@ class UserBindingAdapter (private val onClickListener: ItemViewHolder.OnClickLis
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val data = getItem(position)
         getItem(position)?.let {
             holder.bind(it)
         }

@@ -3,7 +3,10 @@ package com.aggarwalankur.hubsearch.view
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.aggarwalankur.hubsearch.data.GithubUserRepository
+import com.aggarwalankur.hubsearch.data.local.StarredUser
+import com.aggarwalankur.hubsearch.data.utils.toUser
 import com.aggarwalankur.hubsearch.network.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -12,9 +15,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 /**
- * Viewmodel for the main screen as well as the details screen.
+ * Viewmodel for the main screen as well as the details, starred screen.
  *
- * Marking it as OptIn because flatMapLatest is experimental
+ *https://developer.android.com/codelabs/basic-android-kotlin-training-shared-viewmodel
  */
 @HiltViewModel
 class MainViewModel @Inject constructor ( private val repository: GithubUserRepository,
@@ -24,18 +27,21 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
     val state: StateFlow<UiState>
 
     val pagingDataFlow: Flow<PagingData<User>>
-
     //Processes any errors from UI
     val accept: (UiAction) -> Unit
 
     //Showing on details screen
     private val _selectedUser = MutableLiveData<User>()
+
     val selectedUser : LiveData<User>
         get() = _selectedUser
-
     private val _selectedUserIsStarred = MutableLiveData<Boolean>()
+
     val selectedUserIsStarred: LiveData<Boolean>
         get() = _selectedUserIsStarred
+
+    //For Starred Users
+    val pagingStarredUsersFlow: Flow<PagingData<User>>
 
     init {
         val initialQuery: String = savedStateHandle.get(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
@@ -44,6 +50,7 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
         val searches = actionStateFlow
             .filterIsInstance<UiAction.Search>()
             .distinctUntilChanged()
+            .debounce(1000)
             .onStart { emit(UiAction.Search(query = initialQuery)) }
         val queriesScrolled = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
@@ -83,6 +90,11 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
 
+        //https://developer.android.com/topic/libraries/architecture/paging/v3-transform
+        pagingStarredUsersFlow = getStarredUsers().map { pagingData ->
+            pagingData.map { it.toUser() }
+        }.cachedIn(viewModelScope)
+
     }
 
     override fun onCleared() {
@@ -90,6 +102,15 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
         savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         super.onCleared()
     }
+
+    private fun searchUsers(queryString: String): Flow<PagingData<User>> =
+        repository.getSearchResultStream(queryString)
+    //We may insert paging separators, but for now, not doing this
+
+    private fun getStarredUsers() : Flow<PagingData<StarredUser>> =
+        repository.getStarredUsersStream()
+
+    //Below few functions handle the star/unstar of users:
 
     fun setSelectedUser (user: User?) {
         user?.let {
@@ -99,18 +120,18 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
     }
 
     fun toggleStarForSelectedUser(user : User) {
-        //First, create the changed user
-        val changedUser = user.copy(isStarred = !user.isStarred)
-        _selectedUser.value = changedUser
+        //First, change the user
+        user.isStarred = !user.isStarred
+        _selectedUser.value = user
 
-        //We have just set the user ^
+        //We have just set the user ^, so assume its non-null
         _selectedUserIsStarred.value = selectedUser.value!!.isStarred
 
         _selectedUserIsStarred.value?.let {
             if(it) {
-                starUser(changedUser)
+                starUser(user)
             }else {
-                unstarUser(changedUser)
+                unstarUser(user)
             }
         }
     }
@@ -141,11 +162,6 @@ class MainViewModel @Inject constructor ( private val repository: GithubUserRepo
         }
     }
 
-    private fun searchUsers(queryString: String): Flow<PagingData<User>> =
-        repository.getSearchResultStream(queryString)
-            //We may insert paging separators, but for now, not doing this
-
-
 }
 
 sealed class UiAction {
@@ -161,4 +177,4 @@ data class UiState(
 
 private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
-private const val DEFAULT_QUERY = "agg"
+private const val DEFAULT_QUERY = ""

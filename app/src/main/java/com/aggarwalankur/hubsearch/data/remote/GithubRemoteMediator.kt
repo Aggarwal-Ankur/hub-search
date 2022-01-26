@@ -54,6 +54,8 @@ class GithubRemoteMediator(
             }
         }
 
+        if (query.isBlank()) return MediatorResult.Error(Exception())
+
         val apiQuery = query + IN_QUALIFIER
 
         try {

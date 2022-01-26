@@ -9,3 +9,9 @@ fun User.toStarredUser() = StarredUser (
     isStarred = true,
     user_key = 0
 )
+
+fun StarredUser.toUser() = User (
+    id = id, login = login, type = type, profileUrl = profileUrl,
+    avatarUrl = avatarUrl, followersUrl = followersUrl, reposUrl = reposUrl,
+    isStarred = isStarred, user_key = user_key
+)

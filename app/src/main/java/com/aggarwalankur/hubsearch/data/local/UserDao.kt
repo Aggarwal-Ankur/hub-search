@@ -32,7 +32,7 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE id = :id")
     suspend fun getUserById(id : Int) : User?
 
-    @Update
-    suspend fun updateUser(user : User)
+    @Query("UPDATE users SET isStarred=:isStarred WHERE id = :userId")
+    suspend fun updateUser(userId : Long, isStarred : Boolean)
 
 }

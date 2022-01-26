@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.aggarwalankur.hubsearch.R
 import com.aggarwalankur.hubsearch.databinding.FragmentDetailsBinding
@@ -23,17 +22,10 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
-
-
-
         val args = DetailsFragmentArgs.fromBundle(requireArguments())
 
-        Toast.makeText(activity, "Id = ${args.selectedUser.user_key}", Toast.LENGTH_SHORT).show()
-
         binding.user = args.selectedUser
-
         binding.viewModel = viewModel
-
         binding.lifecycleOwner = this
 
         //Set selected user in viewmodel

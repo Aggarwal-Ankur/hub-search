@@ -3,10 +3,8 @@ package com.aggarwalankur.hubsearch.view.search
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -22,6 +20,7 @@ import com.aggarwalankur.hubsearch.network.User
 import com.aggarwalankur.hubsearch.view.MainViewModel
 import com.aggarwalankur.hubsearch.view.UiAction
 import com.aggarwalankur.hubsearch.view.UiState
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,6 +32,11 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
     private val binding get() = _binding!!
 
     val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,8 +63,25 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
         _binding = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.overflow_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.show_starred_users_menu -> {
+                val action = MainFragmentDirections.navigateToStarredFragment()
+                findNavController().navigate(action)
+            }
+        }
+
+        return true
+    }
+
+
     override fun onUserClick(user: User) {
-        Timber.d("User ${user.login} clicked")
         val action = MainFragmentDirections.navigateToDetailsFragment(user)
         findNavController().navigate(action)
     }
@@ -75,8 +96,7 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
         uiActions: (UiAction) -> Unit
     ) {
         val userAdapter = UserBindingAdapter(this@MainFragment)
-        list.adapter = userAdapter.withLoadStateHeaderAndFooter(
-            header = MainLoadStateAdapter { userAdapter.retry() },
+        list.adapter = userAdapter.withLoadStateFooter(
             footer = MainLoadStateAdapter { userAdapter.retry() }
         )
         bindSearch(
@@ -98,7 +118,9 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
 
         searchUser.addTextChangedListener(object : TextWatcher {
 
-            override fun afterTextChanged(s: Editable) {}
+            override fun afterTextChanged(s: Editable) {
+                searchUser.setSelection(searchUser.text.length)
+            }
 
             override fun beforeTextChanged(
                 s: CharSequence, start: Int,
@@ -110,9 +132,7 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                Timber.d("Text in EditText : " + s)
                 updateUserListFromInput(onQueryChanged)
-                Timber.d("Query in EditText : $onQueryChanged")
             }
         })
 
@@ -127,10 +147,10 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
 
     private fun FragmentMainBinding.updateUserListFromInput(onQueryChanged: (UiAction.Search) -> Unit) {
         searchUser.text.trim().let {
-            if (it.isNotEmpty()) {
-                list.scrollToPosition(0)
-                onQueryChanged(UiAction.Search(query = it.toString()))
-            }
+
+            list.scrollToPosition(0)
+            onQueryChanged(UiAction.Search(query = it.toString()))
+
         }
     }
 
@@ -140,6 +160,11 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
         pagingData: Flow<PagingData<User>>,
         onScrollChanged: (UiAction.Scroll) -> Unit
     ) {
+        retryButton.setOnClickListener { userAdapter.retry() }
+        swipeLayout.setOnRefreshListener {
+            swipeLayout.isRefreshing = false
+            userAdapter.retry()
+        }
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
@@ -174,6 +199,7 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
 
         lifecycleScope.launch {
             userAdapter.loadStateFlow.collect { loadState ->
+
                 val isListEmpty = loadState.refresh is LoadState.NotLoading && userAdapter.itemCount == 0
                 // show empty list
                 emptyList.isVisible = isListEmpty
@@ -181,19 +207,20 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
                 list.isVisible = !isListEmpty
                 // Show loading spinner during initial load or refresh.
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-
-
+                // Show the retry state if initial load or refresh fails.
+                retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && userAdapter.itemCount == 0
                 // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                 val errorState = loadState.source.append as? LoadState.Error
                     ?: loadState.source.prepend as? LoadState.Error
                     ?: loadState.append as? LoadState.Error
                     ?: loadState.prepend as? LoadState.Error
                 errorState?.let {
-                    Toast.makeText(
-                        activity,
-                        "Error = ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val snackbar = Snackbar.make(binding.mainLayout, "Error String", Snackbar.LENGTH_INDEFINITE)
+                    snackbar.setAction("OK", View.OnClickListener {
+                        snackbar.dismiss()
+                    })
+
+                    snackbar.show()
                 }
             }
         }

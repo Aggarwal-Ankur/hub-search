@@ -12,6 +12,9 @@
         <action
             android:id="@+id/navigateToDetailsFragment"
             app:destination="@id/detailsFragment" />
+        <action
+            android:id="@+id/navigateToStarredFragment"
+            app:destination="@id/starredFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -21,5 +24,14 @@
         <argument
             android:name="selected_user"
             app:argType="com.aggarwalankur.hubsearch.network.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/starredFragment"
+        android:name="com.aggarwalankur.hubsearch.view.starred.StarredFragment"
+        android:label="@string/starred_users"
+        tools:layout="@layout/fragment_starred" >
+        <action
+            android:id="@+id/navigateToDetailsFragment2"
+            app:destination="@id/detailsFragment" />
     </fragment>
 </navigation>

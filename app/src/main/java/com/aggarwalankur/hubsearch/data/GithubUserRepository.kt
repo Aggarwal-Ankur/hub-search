@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.aggarwalankur.hubsearch.data.local.StarredUser
 import com.aggarwalankur.hubsearch.data.local.UsersDatabase
 import com.aggarwalankur.hubsearch.data.remote.GithubRemoteMediator
 import com.aggarwalankur.hubsearch.data.utils.toStarredUser
@@ -35,11 +36,21 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         ).flow
     }
 
+    fun getStarredUsersStream() : Flow<PagingData<StarredUser>> {
+        val pagingSourceFactory = { database.starredUserDao().getStarredUsers() }
+
+        @OptIn(ExperimentalPagingApi::class)
+        return Pager(
+            config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
+
     suspend fun insertStarredUser(user: User) {
         withContext(Dispatchers.IO) {
             user.isStarred = true
             database.starredUserDao().insert(user.toStarredUser())
-            database.usersDao().updateUser(user)
+            database.usersDao().updateUser(user.id, true)
         }
     }
 
@@ -47,12 +58,12 @@ class GithubUserRepository @Inject constructor(private val service: GithubSearch
         user.isStarred = false
         withContext(Dispatchers.IO) {
             database.starredUserDao().delete(user.id)
-            database.usersDao().updateUser(user)
+            database.usersDao().updateUser(user.id, false)
         }
     }
 
     companion object {
-        const val NETWORK_PAGE_SIZE = 30
+        const val NETWORK_PAGE_SIZE = 100
     }
 
 }

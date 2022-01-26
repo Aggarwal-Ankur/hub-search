@@ -2,12 +2,16 @@
 <resources>
     <dimen name="row_item_margin_vertical">12dp</dimen>
     <dimen name="row_item_margin_horizontal">12dp</dimen>
-    <dimen name="repo_name_size">24sp</dimen>
-    <dimen name="repo_description_size">16sp</dimen>
-    <dimen name="repo_icon_size">24dp</dimen>
+    <dimen name="error_label_size">16sp</dimen>
     <dimen name="loading_progress_bar_size">36dp</dimen>
     <dimen name="placeholder_item_height">32dp</dimen>
     <dimen name="error_text_size">24sp</dimen>
     <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
     <dimen name="image_size">48dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="text_size_big">24sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="details_image_size">120dp</dimen>
 </resources>

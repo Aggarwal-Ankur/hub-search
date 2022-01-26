@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">HubSearch</string>
     <string name="search_hint">Enter Github Username to search</string>
-    <string name="no_results">No results found !!!</string>
+    <string name="no_results">No results found at this time. Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
+    <string name="search_error">Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
     <string name="retry">Retry</string>
     <string name="fragment_main_label">Github Users</string>
     <string name="fragment_details_label">User Details</string>
     <string name="user_type_text">Type : %s</string>
+    <string name="starred_users">Starred Users</string>
 </resources>

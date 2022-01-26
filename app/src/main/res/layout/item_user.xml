@@ -46,8 +46,8 @@
             app:layout_constraintStart_toEndOf="@id/avatar"
             app:layout_constraintEnd_toStartOf="@id/star"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="8dp"
-            android:textSize="20sp"
+            android:layout_margin="@dimen/margin_small"
+            android:textSize="@dimen/text_size_medium"
             android:text="@{user.login}"
             tools:text="TextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
