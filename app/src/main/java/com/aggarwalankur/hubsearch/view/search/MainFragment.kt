@@ -208,7 +208,8 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
                 // Show loading spinner during initial load or refresh.
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 // Show the retry state if initial load or refresh fails.
-                retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && userAdapter.itemCount == 0
+                retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error
+                        && userAdapter.itemCount == 0 && searchUser.text.trim().length > 0
                 // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                 val errorState = loadState.source.append as? LoadState.Error
                     ?: loadState.source.prepend as? LoadState.Error

@@ -2,6 +2,7 @@
     <string name="app_name">HubSearch</string>
     <string name="search_hint">Enter Github Username to search</string>
     <string name="no_results">No results found at this time. Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
+    <string name="no_starred_users">No starred users found</string>
     <string name="search_error">Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
     <string name="retry">Retry</string>
     <string name="fragment_main_label">Github Users</string>
