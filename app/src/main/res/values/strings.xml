@@ -2,7 +2,7 @@
     <string name="app_name">HubSearch</string>
     <string name="search_hint">Enter Github Username to search</string>
     <string name="no_results">No results found at this time. Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
-    <string name="no_starred_users">No starred users found</string>
+    <string name="no_starred_users">No favorite users found</string>
     <string name="search_error">Please check your internet connection and wait some time. Github server only allows a small number of requests per minute</string>
     <string name="search_error_short">Internet or Server Error. Please try again after some time</string>
     <string name="ok">OK</string>
@@ -11,7 +11,7 @@
     <string name="fragment_details_label">User Details</string>
     <string name="user_type_text">Type : %s</string>
     <string name="user_profile_text">Profile : %s</string>
-    <string name="starred_users">Starred Users</string>
-    <string name="content_description_star_img">Star this user</string>
+    <string name="starred_users">Favorite Users</string>
+    <string name="content_description_star_img">Mark this user favorite</string>
     <string name="content_description_avatar">User\'s Avatar</string>
 </resources>

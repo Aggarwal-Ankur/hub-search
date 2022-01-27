@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aggarwalankur.hubsearch.R
 import com.aggarwalankur.hubsearch.databinding.FragmentMainBinding
 import com.aggarwalankur.hubsearch.network.User
+import com.aggarwalankur.hubsearch.view.MIN_QUERY_LENGTH
 import com.aggarwalankur.hubsearch.view.MainViewModel
 import com.aggarwalankur.hubsearch.view.UiAction
 import com.aggarwalankur.hubsearch.view.UiState
@@ -147,10 +148,10 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
 
     private fun FragmentMainBinding.updateUserListFromInput(onQueryChanged: (UiAction.Search) -> Unit) {
         searchUser.text.trim().let {
-
-            list.scrollToPosition(0)
-            onQueryChanged(UiAction.Search(query = it.toString()))
-
+            if (searchUser.text.length>= MIN_QUERY_LENGTH) {
+                list.scrollToPosition(0)
+                onQueryChanged(UiAction.Search(query = it.toString()))
+            }
         }
     }
 
