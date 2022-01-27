@@ -1,6 +1,7 @@
 package com.aggarwalankur.hubsearch.view.details
 
 import android.os.Bundle
+import android.text.util.Linkify
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,12 @@ class DetailsFragment : Fragment() {
         viewModel.setSelectedUser(args.selectedUser)
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Linkify.addLinks(binding.profileUrl, Linkify.ALL)
+
     }
 
     override fun onDestroyView() {

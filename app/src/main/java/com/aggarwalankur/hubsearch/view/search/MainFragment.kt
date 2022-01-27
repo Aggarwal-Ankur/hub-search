@@ -216,8 +216,9 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
                     ?: loadState.append as? LoadState.Error
                     ?: loadState.prepend as? LoadState.Error
                 errorState?.let {
-                    val snackbar = Snackbar.make(binding.mainLayout, "Error String", Snackbar.LENGTH_INDEFINITE)
-                    snackbar.setAction("OK", View.OnClickListener {
+                    val snackbar = Snackbar.make(binding.mainLayout, getString(R.string.search_error_short),
+                        Snackbar.LENGTH_INDEFINITE)
+                    snackbar.setAction(getString(R.string.ok), View.OnClickListener {
                         snackbar.dismiss()
                     })
 

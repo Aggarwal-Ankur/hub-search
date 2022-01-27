@@ -14,4 +14,6 @@
     <dimen name="text_size_big">24sp</dimen>
     <dimen name="text_size_medium">20sp</dimen>
     <dimen name="details_image_size">120dp</dimen>
+    <dimen name="guideline_begin">200dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
 </resources>

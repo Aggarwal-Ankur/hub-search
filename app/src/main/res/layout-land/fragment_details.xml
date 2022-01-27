@@ -21,24 +21,25 @@
             android:id="@+id/avatarIv"
             android:layout_width="@dimen/details_image_size"
             android:layout_height="@dimen/details_image_size"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:contentDescription="@string/content_description_avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:loadImg="@{user.avatarUrl}"
-            tools:src="@tools:sample/avatars"
-            android:contentDescription="@string/content_description_avatar" />
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/nameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_large"
             android:fontFamily="serif-monospace"
             android:text="@{user.login}"
             android:textSize="@dimen/text_size_big"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatarIv"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/app_name" />
 
         <TextView
@@ -48,7 +49,7 @@
             android:layout_marginTop="@dimen/margin_medium"
             android:text="@{String.format(@string/user_type_text, user.type)}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/nameTv"
             tools:text="TextView" />
 
@@ -56,25 +57,33 @@
             android:id="@+id/profileUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:linksClickable="true"
-            android:autoLink="web"
             android:layout_marginTop="@dimen/margin_medium"
+            android:autoLink="web"
+            android:linksClickable="true"
             android:text="@{String.format(@string/user_profile_text, user.profileUrl)}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_type" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/user_type"
+            tools:text="Profile : "/>
 
         <ImageView
             android:id="@+id/starIv"
             android:layout_width="@dimen/image_size"
             android:layout_height="@dimen/image_size"
+            android:contentDescription="@string/content_description_star_img"
             android:onClick="@{() -> viewModel.toggleStarForSelectedUser(user)}"
             android:src="@{viewModel.selectedUserIsStarred?@drawable/ic_star_fill:@drawable/ic_star_outline}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileUrl"
-            android:contentDescription="@string/content_description_star_img" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/profileUrl" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/guideline_begin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
