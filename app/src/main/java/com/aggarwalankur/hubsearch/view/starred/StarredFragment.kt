@@ -6,53 +6,48 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.aggarwalankur.hubsearch.R
-import com.aggarwalankur.hubsearch.databinding.FragmentMainBinding
 import com.aggarwalankur.hubsearch.databinding.FragmentStarredBinding
 import com.aggarwalankur.hubsearch.network.User
 import com.aggarwalankur.hubsearch.view.MainViewModel
 import com.aggarwalankur.hubsearch.view.search.ItemViewHolder
-import com.aggarwalankur.hubsearch.view.search.MainFragmentDirections
 import com.aggarwalankur.hubsearch.view.search.UserBindingAdapter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class StarredFragment : Fragment(),  ItemViewHolder.OnClickListener {
-    private var _binding: FragmentStarredBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var _binding: FragmentStarredBinding
 
-    val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+    private val viewModel :MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentStarredBinding.inflate(inflater, container, false)
+        val root = inflater.inflate(R.layout.fragment_starred, container, false)
+        _binding = FragmentStarredBinding.bind(root)
 
         // add dividers between RecyclerView's row items
         val decoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-        binding.starredList.addItemDecoration(decoration)
+        _binding.starredList.addItemDecoration(decoration)
 
 
         // bind the state
-        binding.bindState(viewModel.pagingStarredUsersFlow)
+        _binding.bindState(viewModel.pagingStarredUsersFlow)
 
-        return binding.root
+        return _binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 
     override fun onUserClick(user: User) {

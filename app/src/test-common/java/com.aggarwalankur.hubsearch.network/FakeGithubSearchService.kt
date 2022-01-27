@@ -2,9 +2,10 @@ package com.aggarwalankur.hubsearch.network
 
 import retrofit2.http.Query
 import java.io.IOException
+import javax.inject.Inject
 import kotlin.math.min
 
-class FakeGithubSearchService : GithubSearchService {
+class FakeGithubSearchService  @Inject constructor() : GithubSearchService {
 
     var failureMsg: String? = null
     private val items : MutableList<User> = arrayListOf()

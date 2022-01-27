@@ -7,7 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
@@ -31,7 +31,7 @@ class MainFragment : Fragment(),  ItemViewHolder.OnClickListener{
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    val viewModel: MainViewModel by hiltNavGraphViewModels(R.id.nav_graph)
+    val viewModel: MainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

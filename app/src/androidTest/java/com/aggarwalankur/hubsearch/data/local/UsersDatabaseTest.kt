@@ -1,11 +1,13 @@
 package com.aggarwalankur.hubsearch.data.local
 
 import androidx.paging.PagingSource
+import androidx.room.Room
 import androidx.test.filters.SmallTest
 import com.aggarwalankur.hubsearch.data.utils.toStarredUser
 import com.aggarwalankur.hubsearch.network.FakeUserFactory
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -31,6 +33,7 @@ class UsersDatabaseTest {
     @Before
     fun setup() {
         hiltRule.inject()
+
         userDao = database.usersDao()
         starredUserDao = database.starredUserDao()
         userFactory = FakeUserFactory()
